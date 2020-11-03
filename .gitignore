@@ -1,0 +1,5 @@
+*.html
+*.txt
+*.out
+.vscode/
+cmd/dumpspm/dumpspm
