@@ -2,7 +2,8 @@ Sentence Piece Encoder
 ======================
 
 This is pure go implementation of the sentencepiece encoder.
-It takes a sentencepiece model and tokenizes it.
+Create an encoder for the given sentencepiece model and then use
+use the `Tokenize` function to split the input text into tokens.
 
 Example:
 
