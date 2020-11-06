@@ -21,16 +21,19 @@ func NewSentencepieceFromFile(filename string, lowercase bool) (Sentencepiece, e
 	}
 
 	count := 0
-	unknownIndex := int64(0)
 	for i, piece := range model.GetPieces() {
+		typ := piece.GetType()
 		word := piece.GetPiece()
-		if word == unknown {
-			unknownIndex = int64(i)
+		switch typ {
+		case ModelProto_SentencePiece_NORMAL:
+			s.insert(word, piece.GetScore(), int32(i))
+		case ModelProto_SentencePiece_UNKNOWN:
+			s.SetUnknownIndex(int32(i))
+		case ModelProto_SentencePiece_CONTROL:
+			s.SetControlWord(word, int32(i))
 		}
-		s.insert(word, piece.GetScore(), int64(i))
 		count++
 	}
 
-	s.SetUnknownIndex(unknownIndex)
 	return s, nil
 }

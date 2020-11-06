@@ -293,6 +293,43 @@ func TestTokenizationSPM(t *testing.T) {
 	}
 }
 
+func TestControlWords(t *testing.T) {
+	sp, err := NewSentencepieceFromFile("test_data/xlnet-base-cased-spiece.model", false)
+	if err != nil {
+		t.Errorf("Unable to create sentencepiece")
+		return
+	}
+
+	unknownIndex := sp.GetUnknownIndex()
+	if unknownIndex != 0 {
+		t.Errorf("Unknown index not equal to 0")
+	}
+
+	clsIndex, ok := sp.GetControlWord("<cls>")
+	if !ok || clsIndex != 3 {
+		t.Errorf("Control word [CLS] not correct : %d", clsIndex)
+	}
+
+}
+
+func TestControlWords2(t *testing.T) {
+	sp, err := NewSentencepieceFromFile("test_data/spm.model", true)
+	if err != nil {
+		t.Errorf("Unable to create sentencepiece")
+		return
+	}
+
+	unknownIndex := sp.GetUnknownIndex()
+	if unknownIndex != 1 {
+		t.Errorf("Unknown index not equal to 1")
+	}
+
+	clsIndex, ok := sp.GetControlWord("[CLS]")
+	if !ok || clsIndex != 2 {
+		t.Errorf("Control word [CLS] not correct")
+	}
+}
+
 func BenchmarkSentencePiece(b *testing.B) {
 	sp, err := NewSentencepieceFromFile("test_data/xlnet-base-cased-spiece.model", false)
 	if err != nil {

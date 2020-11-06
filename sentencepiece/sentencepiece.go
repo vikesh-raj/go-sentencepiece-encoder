@@ -14,7 +14,7 @@ const unknown string = "<unk>"
 
 type slice struct {
 	score float32
-	index int64
+	index int32
 	start int
 	end   int
 }
@@ -42,7 +42,7 @@ type trieNode struct {
 	text     string
 	level    int
 	score    float32
-	index    int64
+	index    int32
 	end      bool
 	children map[rune]trieNode
 }
@@ -60,19 +60,41 @@ func newTrieNode(text string, level int) trieNode {
 
 // Sentencepiece holds the model
 type Sentencepiece struct {
-	root      trieNode
-	lowercase bool
-	unknown   int64
+	root         trieNode
+	lowercase    bool
+	unknown      int32
+	controlWords map[string]int32
 }
 
 // NewEmptySentencepiece creates an empty sentencepiece model
 func NewEmptySentencepiece(lowercase bool) Sentencepiece {
-	return Sentencepiece{root: newTrieNode("", 0), lowercase: lowercase}
+	return Sentencepiece{
+		root:         newTrieNode("", 0),
+		lowercase:    lowercase,
+		unknown:      0,
+		controlWords: make(map[string]int32),
+	}
 }
 
 // SetUnknownIndex sets the index for the unknown id
-func (s *Sentencepiece) SetUnknownIndex(index int64) {
+func (s *Sentencepiece) SetUnknownIndex(index int32) {
 	s.unknown = index
+}
+
+// GetUnknownIndex gets the index of the unknown id
+func (s *Sentencepiece) GetUnknownIndex() int32 {
+	return s.unknown
+}
+
+// SetControlWord sets the index for the given control word
+func (s *Sentencepiece) SetControlWord(word string, index int32) {
+	s.controlWords[word] = index
+}
+
+// GetControlWord gets the index for the given control word
+func (s *Sentencepiece) GetControlWord(word string) (int32, bool) {
+	v, ok := s.controlWords[word]
+	return v, ok
 }
 
 // Tokenize tokenizes text into pieces
@@ -91,16 +113,16 @@ func (s *Sentencepiece) Tokenize(text string) []Token {
 }
 
 // TokenizeToIDs tokenizes text into ids from the vocab
-func (s *Sentencepiece) TokenizeToIDs(text string) []int64 {
+func (s *Sentencepiece) TokenizeToIDs(text string) []int32 {
 	tokens := s.Tokenize(text)
-	ids := make([]int64, len(tokens))
+	ids := make([]int32, len(tokens))
 	for i, token := range tokens {
 		ids[i] = token.ID
 	}
 	return ids
 }
 
-func (s *Sentencepiece) insert(word string, score float32, index int64) {
+func (s *Sentencepiece) insert(word string, score float32, index int32) {
 	_, size := utf8.DecodeLastRuneInString(word)
 	charCount := len(word)
 	node := &s.root
