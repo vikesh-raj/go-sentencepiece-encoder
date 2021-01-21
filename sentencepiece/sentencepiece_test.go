@@ -200,6 +200,15 @@ func TestTokenizationSPM(t *testing.T) {
 			{ID: 103, Text: "n"},
 			{ID: 1333, Text: "ized"},
 		}},
+		{text: ".", tokens: []Token{{ID: 13, Text: "▁"}, {ID: 9, Text: "."}}},
+		{text: "this is a dot .", tokens: []Token{
+			{ID: 48, Text: "▁this"},
+			{ID: 25, Text: "▁is"},
+			{ID: 21, Text: "▁a"},
+			{ID: 14123, Text: "▁dot"},
+			{ID: 13, Text: "▁"},
+			{ID: 9, Text: "."},
+		}},
 		{text: "compose email to john saying i will be running late to office today because i am not feeling well, my head is aching and in the body add shall we meet next week and when we go to the office lets reach by around 10 am and go for a movie in the evening, may be Spiderman which seems to be a very good movie which got 5 star review from rottentomatoes and imdb", tokens: []Token{
 			{ID: 18217, Text: "▁compose"},
 			{ID: 8517, Text: "▁email"},

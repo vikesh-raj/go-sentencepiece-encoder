@@ -25,7 +25,7 @@ func NewSentencepieceFromFile(filename string, lowercase bool) (Sentencepiece, e
 		typ := piece.GetType()
 		word := piece.GetPiece()
 		switch typ {
-		case ModelProto_SentencePiece_NORMAL:
+		case ModelProto_SentencePiece_NORMAL, ModelProto_SentencePiece_USER_DEFINED:
 			s.insert(word, piece.GetScore(), int32(i))
 		case ModelProto_SentencePiece_UNKNOWN:
 			s.SetUnknownIndex(int32(i))

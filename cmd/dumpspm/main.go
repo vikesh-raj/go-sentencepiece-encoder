@@ -23,7 +23,7 @@ func dumpWords(filename string) error {
 	count := 0
 	for i, piece := range model.GetPieces() {
 		word := piece.GetPiece()
-		fmt.Println(word, piece.GetScore(), i)
+		fmt.Println(word, piece.GetScore(), "(", piece.GetType(), ")", i)
 		count++
 	}
 
